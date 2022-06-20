@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -6,7 +6,18 @@ import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-
+import Button from '@material-ui/core/Button';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
 
 //Dev mode
 const serverURL = ""; //enable for dev mode
@@ -66,6 +77,147 @@ const styles = theme => ({
   },
 
 });
+
+
+const MovieSelection = (props) => { // state.age, handleChange
+
+  const handleChange = (event) => {
+    props.setMovie(event.target.value);
+  };
+
+  return(
+    <>
+     <InputLabel htmlFor="Movie-native-simple">Movie</InputLabel>
+        <Select
+          native
+          onChange={handleChange}
+          error
+        >
+          <option aria-label="None" value="" />
+          <option value={"The Batman"}>The Batman</option>
+          <option value={"The Dark knight rises"}>The Dark knight rises</option>
+          <option value={"Batman VS Superman"}>Batman VS Superman</option>
+          <option value={"Batman begins"}>Batman begins </option>
+          <option value={"The Dark Knight"}>The Dark Knight</option>
+        </Select> 
+    </>
+  );
+}
+
+const ReviewTitle = (props) => {
+
+  const handleChange = (event) => {
+    props.setReviewTitle(event.target.value);
+  };
+  return(
+    
+     <form className={""} noValidate autoComplete="off">
+      <TextField id="standard-basic" label="Review Title" onChange ={handleChange}/>
+    </form>
+    
+  );
+}
+
+const ReviewBody = (props)  =>{
+
+  const handleChange = (event) => {
+    props.setReviewBody(event.target.value);
+  }
+  return(
+    <>
+   <TextField
+          id="outlined-multiline-static"
+          label="Body"
+          multiline
+          rows={4}
+          defaultValue=""
+          variant="outlined"
+          onChange = {handleChange}
+        />
+    </>
+  );
+}
+
+const ReviewRating = (props) => {
+
+  const handleChange = (event) => {
+    props.setReviewRating(event.target.value);
+  }
+  
+  return(
+    <>
+    <FormControl component="fieldset">
+      <FormLabel component="legend">ratings</FormLabel>
+      <RadioGroup aria-label="ratings" onChange={handleChange}>
+        <FormControlLabel value="1" control={<Radio />} label="1" />
+        <FormControlLabel value="2" control={<Radio />} label="2" />
+        <FormControlLabel value="3" control={<Radio />} label="3" />
+        <FormControlLabel value="4" control={<Radio />} label="4" />
+        <FormControlLabel value="5" control={<Radio />} label="5" />
+      </RadioGroup>
+    </FormControl>
+    </>
+  );
+}
+
+function Review() {
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [enteredTitle, setEnteredTitle] = useState("");
+  const [enteredReview, setEnteredReview] = useState("");
+  const [selectedRating, setSelectedRating] = useState("");
+  const [isEmptyField, setIsEmptyField] = useState(false);
+
+  const handleClick = () => {
+    if (selectedMovie === "") {
+      alert("movie");
+    }
+    if ( enteredTitle === ""){
+      alert ("title")
+    }
+    if ( enteredReview === ""){
+      alert ("review")
+    }
+    if ( selectedRating === ""){
+      alert ("rating")
+    }
+  }
+
+  return(
+    <div>
+    <Grid container spacing={3}>
+      <Grid item xs={10}>
+      <Typography variant="h3" gutterBottom>
+        Submit a Movie Review
+      </Typography>
+      </Grid>
+      <Grid item xs={10} sm={4}>
+        <MovieSelection setMovie = {setSelectedMovie} error={isEmptyField}/>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <ReviewRating setReviewTitle = {setEnteredTitle}/>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+       <ReviewTitle setReviewBody={setEnteredReview}/>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <ReviewBody setReviewRating={setSelectedRating}/>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+    
+      </Grid>
+    </Grid>
+
+      <Button variant="contained" onClick={handleClick}>
+        Submit
+      </Button>
+      
+      
+  </div>
+);
+
+}
 
 
 class Home extends Component {
@@ -135,7 +287,7 @@ class Home extends Component {
           >
             {this.state.mode === 0 ? (
               <React.Fragment>
-                Welcome to MSci245!
+              
               </React.Fragment>
             ) : (
               <React.Fragment>
@@ -144,6 +296,9 @@ class Home extends Component {
             )}
           </Typography>
 
+        </Grid>
+        <Grid item>
+          <Review />
         </Grid>
       </Grid>
     )
@@ -170,3 +325,4 @@ Home.propTypes = {
 };
 
 export default withStyles(styles)(Home);
+
