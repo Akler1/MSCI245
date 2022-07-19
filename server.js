@@ -36,6 +36,54 @@ app.post('/api/loadUserSettings', (req, res) => {
 	connection.end();
 });
 
+app.post('/api/getMovies', (req,res) => {
+
+	let connection = mysql.createConnection(config);
+	
+
+	let sql = `SELECT * FROM a3kler.movies`;
+	console.log(sql);
+	
+	connection.query(sql, [], (error, results, fields) => {
+		if (error) {
+			return console.error(error.message);
+		}
+
+		let string = JSON.stringify(results);
+		//let obj = JSON.parse(string);
+		res.send({ express: string });
+	});
+	connection.end();
+});
+
+app.post('/api/addReview', (req, res) => {
+	
+	let connection = mysql.createConnection(config);
+	let ReviewTitle = req.body.ReviewTitle;
+	let ReviewBody = req.body.ReviewBody;
+	let ReviewScore = req.body.ReviewScore;
+	let MovieID = req.body.MovieID;
+	let UserID = req.body.UserID;
+	
+	let sql = `INSERT INTO review (reviewTitle, reviewContent, reviewScore, movieID, userID) VALUES (?, ?, ?, ?, ?)`;
+	console.log(sql);
+	let data = [ReviewTitle, ReviewBody, ReviewScore, MovieID, UserID];
+	console.log(data);
+
+	connection.query(sql, data, (error, results, fields) => {
+		if (error) {
+			return console.error(error.message);
+		}
+
+		let string = JSON.stringify(results);
+		//let obj = JSON.parse(string);
+		res.send({ express: string });
+	});
+	connection.end();
+});
+
+
+
 
 
 app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version

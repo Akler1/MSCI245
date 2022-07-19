@@ -9,7 +9,6 @@ import Paper from "@material-ui/core/Paper";
 import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,7 +17,8 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
-
+import FormControl from '@material-ui/core/FormControl';
+import  MenuItem  from '@material-ui/core/MenuItem';
 //Dev mode
 const serverURL = ""; //enable for dev mode
 
@@ -74,32 +74,77 @@ const styles = theme => ({
     opacity: opacityValue,
     maxWidth: 250,
     paddingBottom: theme.spacing(2),
+    
+    fromControl: {
+      margin: theme.spacing(1),
+      minWidth: 140, 
+    }
   },
 
 });
 
 
-const MovieSelection = (props) => { // state.age, handleChange
+const MovieSelection = (props) => {
+  const classes = styles;
+  const [movie, setMovie] = React.useState('');
+  const [moviesList,setMoviesList] = React.useState([]);
 
+  const CallGetMovies = () => {
+    callApiGetMovies()
+      .then(res => {
+        console.log("callApiGetMovies returned: ", res)
+        var parsed = JSON.parse(res.express);
+        console.log("callApiGetMovies parsed: ", parsed);
+        setMoviesList(parsed);
+      })
+  }
+  
+  const callApiGetMovies = async () => {
+  
+    const url = serverURL + "/api/getMovies";
+    console.log(url);
+  
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    console.log("getMovies : ", body);
+    return body;
+  }
   const handleChange = (event) => {
-    props.setMovie(event.target.value);
+    props.setMovieSelection(event.target.value.name);
+    setMovie(event.target.value);
+    props.enteredMovieID(event.target.value.id);
   };
+  React.useEffect(() => {
+      CallGetMovies();
+      console.log(moviesList);
+  }, []);
 
   return(
     <>
-     <InputLabel htmlFor="Movie-native-simple">Movie</InputLabel>
+    <FormControl className={classes.formControl}>
+     <InputLabel id= "MovieSelectionLabel"> Pick A Movie</InputLabel>
         <Select
-          native
+          labelId= "MovieSelectionLabel"
+          id = "MovieSelectionForm"
+          value={movie}
           onChange={handleChange}
-          error
+        
         >
-          <option aria-label="None" value="" />
-          <option value={"The Batman"}>The Batman</option>
-          <option value={"The Dark knight rises"}>The Dark knight rises</option>
-          <option value={"Batman VS Superman"}>Batman VS Superman</option>
-          <option value={"Batman begins"}>Batman begins </option>
-          <option value={"The Dark Knight"}>The Dark Knight</option>
+          {moviesList.map((movies) =>
+           {
+            return(
+              <MenuItem value={movies}>{movies.name}</MenuItem>
+            )
+
+          })}
         </Select> 
+    </FormControl>
     </>
   );
 }
@@ -111,8 +156,8 @@ const ReviewTitle = (props) => {
   };
   return(
     
-     <form className={""} noValidate autoComplete="off">
-      <TextField id="standard-basic" label="Review Title" onChange ={handleChange}/>
+     <form >
+      <TextField id="standard-basic" label="Review Title" onChange ={handleChange}  />
     </form>
     
   );
@@ -125,37 +170,68 @@ const ReviewBody = (props)  =>{
   }
   return(
     <>
+    <form>
    <TextField
-          id="outlined-multiline-static"
+          id="InputedReviewBodyText"
           label="Body"
           multiline
           rows={4}
           defaultValue=""
           variant="outlined"
           onChange = {handleChange}
+          
         />
+        </form>
     </>
   );
 }
 
 const ReviewRating = (props) => {
-
-  const handleChange = (event) => {
+ const [selectedRating, setRating] = React.useState("0");
+  
+ const handleChange = (event) => {
+   setRating(event.target.value);
     props.setReviewRating(event.target.value);
   }
   
   return(
     <>
-    <FormControl component="fieldset">
-      <FormLabel component="legend">ratings</FormLabel>
-      <RadioGroup aria-label="ratings" onChange={handleChange}>
-        <FormControlLabel value="1" control={<Radio />} label="1" />
-        <FormControlLabel value="2" control={<Radio />} label="2" />
-        <FormControlLabel value="3" control={<Radio />} label="3" />
-        <FormControlLabel value="4" control={<Radio />} label="4" />
-        <FormControlLabel value="5" control={<Radio />} label="5" />
-      </RadioGroup>
-    </FormControl>
+      <p> Rate from 1-5</p>
+      <Radio
+      checked={selectedRating === "1"}
+      onChange = {handleChange}
+      value = "1"
+      name = "radio-butto-Rating"
+      inputProps = {{ 'aria-label' : '1'}}
+      />
+       <Radio
+      checked={selectedRating === "2"}
+      onChange = {handleChange}
+      value = "2"
+      name = "radio-butto-Rating"
+      inputProps = {{ 'aria-label' : '2'}}
+      />
+       <Radio
+      checked={selectedRating === "3"}
+      onChange = {handleChange}
+      value = "3"
+      name = "radio-butto-Rating"
+      inputProps = {{ 'aria-label' : '3'}}
+      />
+       <Radio
+      checked={selectedRating === "4"}
+      onChange = {handleChange}
+      value = "4"
+      name = "radio-butto-Rating"
+      inputProps = {{ 'aria-label' : '4'}}
+      />
+       <Radio
+      checked={selectedRating === "5"}
+      onChange = {handleChange}
+      value = "5"
+      name = "radio-butto-Rating"
+      inputProps = {{ 'aria-label' : '5'}}
+      />
     </>
   );
 }
@@ -164,21 +240,92 @@ function Review() {
   const [selectedMovie, setSelectedMovie] = useState("");
   const [enteredTitle, setEnteredTitle] = useState("");
   const [enteredReview, setEnteredReview] = useState("");
-  const [selectedRating, setSelectedRating] = useState("");
-  const [isEmptyField, setIsEmptyField] = useState(false);
+  const [selectedRating, setSelectedRating] = useState("0");
+  const [error, setError] = useState("");
+  const [Display, setDisplay] = useState("none");
+  const [enteredMovieID, setEnteredMovieID] = useState(0);
 
+   const InputReview = (review) => {
+    AddReviewAPI(review)
+    .then(res => {
+      console.log("AddReviewAPI returned: ", res)
+      var parsed = JSON.parse(res.express);
+      console.log("AddReviewAPI parsed: ", parsed);
+    })
+  }
+  const AddReviewAPI = async (review) => {
+    const url = serverURL + "/api/addReview";
+    console.log(url);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MovieID: review.MovieID,
+        ReviewTitle: review.ReviewTitle,
+        ReviewScore: review.ReviewScore,
+        ReviewBody: review.ReviewBody,
+        UserID: review.UserID
+      })
+    });
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    console.log("Found recipes: ", body);
+    return body;
+  }
   const handleClick = () => {
-    if (selectedMovie === "") {
-      alert("movie");
+    
+    if (selectedMovie === "" || enteredTitle === "" || enteredReview === "" || selectedRating === "0"){
+      if (selectedMovie === "") {
+        setError("please fill all feilds ");
+        setDisplay("none")
+      } else {
+        if (error != ""){
+          setError("");
+        }
+        setDisplay("inline-block")
+      }
+      if ( enteredTitle === ""){
+        setError("please fill all feilds ");
+        setDisplay("none")
+      } else {
+        if (error != ""){
+          setError("");
+        }
+        setDisplay("inline-block")
+      }
+      if ( enteredReview === ""){
+        setError("please fill all feilds ");
+        setDisplay("none")
+      } else {
+        if (error != ""){
+          setError("");
+        }
+        setDisplay("inline-block")
+      }
+      if ( selectedRating === "0"){
+        setError("please fill all feilds ");
+        setDisplay("none")
+      } else {
+        if (error != ""){
+          setError("");
+        }
+        setDisplay("inline-block")
+      }
     }
-    if ( enteredTitle === ""){
-      alert ("title")
-    }
-    if ( enteredReview === ""){
-      alert ("review")
-    }
-    if ( selectedRating === ""){
-      alert ("rating")
+    else {
+      let review = {
+        MovieID:  enteredMovieID,
+        ReviewTitle: enteredTitle,
+        ReviewScore: selectedRating,
+        ReviewBody: enteredReview,
+        UserID: 1
+      };
+      console.log(review);
+      InputReview(review);
+      setError("")
+      setDisplay("inline-block")
     }
   }
 
@@ -191,29 +338,30 @@ function Review() {
       </Typography>
       </Grid>
       <Grid item xs={10} sm={4}>
-        <MovieSelection setMovie = {setSelectedMovie} error={isEmptyField}/>
+        <MovieSelection enteredMovieID = {setEnteredMovieID} setMovieSelection = {setSelectedMovie} />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <ReviewRating setReviewTitle = {setEnteredTitle}/>
+      <ReviewTitle setReviewTitle={setEnteredTitle} />
       </Grid>
       <Grid item xs={6} sm={3}>
-       <ReviewTitle setReviewBody={setEnteredReview}/>
+      <ReviewRating setReviewRating = {setSelectedRating} />
       </Grid>
       <Grid item xs={6} sm={3}>
-        <ReviewBody setReviewRating={setSelectedRating}/>
+        <ReviewBody setReviewBody={setEnteredReview} />
       </Grid>
       <Grid item xs={6} sm={3}>
+      <Button variant= "contained" onClick={handleClick}>Submit</Button>
       </Grid>
       <Grid item xs={6} sm={3}>
-    
+      <div style={{"display": Display}}>
+        <h3> inputed review:</h3>
+       <p>{selectedMovie}</p>
+        <p>{enteredTitle}</p>
+        <p>{enteredReview}</p>
+       <p>{selectedRating}</p>
+      </div>
       </Grid>
     </Grid>
-
-      <Button variant="contained" onClick={handleClick}>
-        Submit
-      </Button>
-      
-      
   </div>
 );
 
