@@ -56,6 +56,25 @@ app.post('/api/getMovies', (req,res) => {
 	connection.end();
 });
 
+app.post('/api/getActors', (req,res) => {
+
+	let connection = mysql.createConnection(config);
+
+	let sql = `SELECT first_name, last_name, name, role  FROM a3kler.actors a, a3kler.roles r, a3kler.movies m  WHERE m.id = r.movie_id AND a.id = r.actor_id  limit 50`;
+	console.log(sql);
+	
+	connection.query(sql, [], (error, results, fields) => {
+		if (error) {
+			return console.error(error.message);
+		}
+
+		let string = JSON.stringify(results);
+		//let obj = JSON.parse(string);
+		res.send({ express: string });
+	});
+	connection.end();
+});
+
 app.post('/api/addReview', (req, res) => {
 	
 	let connection = mysql.createConnection(config);
@@ -82,9 +101,26 @@ app.post('/api/addReview', (req, res) => {
 	connection.end();
 });
 
+app.post('/api/getMovies', (req,res) => {
+
+	let connection = mysql.createConnection(config);
+	
+
+	let sql = `SELECT name, director FROM a3kler.movies`;
+	console.log(sql);
+	
+	connection.query(sql, [], (error, results, fields) => {
+		if (error) {
+			return console.error(error.message);
+		}
+
+		let string = JSON.stringify(results);
+		//let obj = JSON.parse(string);
+		res.send({ express: string });
+	});
+	connection.end();
+});
 
 
 
-
-app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version
-//app.listen(port, '129.97.25.211'); //for the deployed version, specify the IP address of the server
+app.listen(port, '172.31.31.77');

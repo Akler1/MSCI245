@@ -19,8 +19,16 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import  MenuItem  from '@material-ui/core/MenuItem';
+import { Router, Switch, Route } from "react-router-dom";
+import Link from '@material-ui/core/Link';
+import history from '../Navigation/history';
+import AppBar from '@material-ui/core/AppBar';
+import Box from '@material-ui/core/Box';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+
 //Dev mode
-const serverURL = ""; //enable for dev mode
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3018"; //enable for dev mode
 
 //Deployment mode instructions
 //const serverURL = "http://ov-research-4.uwaterloo.ca:PORT"; //enable for deployed mode; Change PORT to the port number given to you;
@@ -331,6 +339,15 @@ function Review() {
 
   return(
     <div>
+       <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+               <Button color="inherit" onClick={() => history.push('/')} > Landing </Button>
+               <Button color="inherit" onClick={() => history.push('/Search')} > Search for a movie </Button>
+               <Button color="inherit" onClick={() => history.push('/MyPage')} > Actor info </Button>
+               </Toolbar>
+        </AppBar>
+            </Box>
     <Grid container spacing={3}>
       <Grid item xs={10}>
       <Typography variant="h3" gutterBottom>

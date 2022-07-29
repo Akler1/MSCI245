@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Landing from '../Landing';
+
 import {
   BrowserRouter as Router,
   Route,
@@ -33,7 +35,7 @@ class App extends Component {
     return (
 	  <Router>
 	    <div>
-        <PrivateRoute exact path="/" component={Home}/>
+      <PrivateRoute exact path="/" component={Landing} />
 	    </div>
 	  </Router>
     );
