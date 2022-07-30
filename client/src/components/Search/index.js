@@ -48,16 +48,16 @@ const styles = theme => ({
 });
 
 
-const Searchs = () => {
+const Search = () => {
     const classes = styles;
     const [ DirectorInput, setDirectorInput] = React.useState('');
     const [ ActorInput, setActorInput] = React.useState('');
     const [ MovieInput, setMovieInput] = React.useState('');
     const [ Error, setError] = React.useState('');
-    const  [Results, setResults] = React.useState('empty');
+    const [ Results, setResults] = React.useState('empty');
     
     const CallSearch = (data) => {
-        callApiSearch()
+        callApiSearch(data)
           .then(res => {
             console.log("callApiSearch returned: ", res)
             var parsed = JSON.parse(res.express);
@@ -103,10 +103,10 @@ const Searchs = () => {
             })}
             </div>
             </div>
-            </>
-            );
+        </>
+    );
 
-            }
+}
 
 
 
@@ -116,10 +116,10 @@ const  SearchPage = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
-               <Button color="inherit" onClick={() => history.push('/Home')} > Leave a review </Button>
+               <Button color="inherit" onClick={() => history.push('/Reviews')} > Leave a review </Button>
                <Button color="inherit" onClick={() => history.push('/MyPage')} > actor info</Button>
                <Button color="inherit" onClick={() => history.push('/')} > Landing </Button>
-               </Toolbar>
+          </Toolbar>
         </AppBar>
             </Box>
                 <Typography variant="h3" color="inherit" noWrap>
@@ -132,7 +132,8 @@ const  SearchPage = () => {
       </Typography>
       </Grid>
       <Grid item xs={10}>
-        </Grid>
+        <Search />
+      </Grid>
       </Grid>
     
      </div>

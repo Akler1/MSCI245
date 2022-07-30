@@ -121,7 +121,7 @@ const  MyPage = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
-               <Button color="inherit" onClick={() => history.push('/Home')} > Leave a review </Button>
+               <Button color="inherit" onClick={() => history.push('/Reviews')} > Leave a review </Button>
                <Button color="inherit" onClick={() => history.push('/Search')} > Search for a movie </Button>
                <Button color="inherit" onClick={() => history.push('/')} > Landing </Button>
                </Toolbar>

@@ -101,12 +101,12 @@ app.post('/api/addReview', (req, res) => {
 	connection.end();
 });
 
-app.post('/api/getMovies', (req,res) => {
+app.post('/api/search', (req,res) => {
 
 	let connection = mysql.createConnection(config);
 	
 
-	let sql = `SELECT name, director FROM a3kler.movies`;
+	let sql = `SELECT DISTINCT(R.movie_id) as movieID, M.name as movie, md.director_id as director, concat(D.first_name, ' ', D.last_name) as directorName FROM a3kler.actors as A INNER JOIN a3kler.roles as R On A.id = R.actor_id INNER JOIN a3kler.movies as M On M.id = R.movie_id INNER JOIN a3kler.movies_directors as md On md.movie_id = M.id INNER JOIN a3kler.directors as D on D.id = md.director_id WHERE concat(A.first_name, ' ', A.last_name) LIKE ('%') AND M.name LIKE ('%') AND  concat(D.first_name, ' ', D.last_name) LIKE ('%')`;
 	console.log(sql);
 	
 	connection.query(sql, [], (error, results, fields) => {
